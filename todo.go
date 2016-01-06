@@ -1,4 +1,4 @@
-package yatl
+package main
 
 import "time"
 

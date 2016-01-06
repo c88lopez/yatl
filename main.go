@@ -3,27 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
-
-	"github.com/gorilla/mux"
 )
 
-// Todo struct
-type Todo struct {
-	Name      string    `json:"name"`
-	Completed bool      `json:"completed"`
-	Due       time.Time `json:"due"`
-}
-
-// Todos list
-type Todos []Todo
-
+// main func
 func main() {
-	router := mux.NewRouter().StrictSlash(true)
-
-	router.HandleFunc("/", Index)
-	router.HandleFunc("/todos", TodoIndex)
-	router.HandleFunc("/todos/{todoID}", TodoShow)
+	router := NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
