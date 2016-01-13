@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/gorilla/mux"
 )
 
@@ -15,14 +15,32 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 // TodoIndex func
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	todos := Todos{
-		Todo{Name: "Write presentation"},
-		Todo{Name: "Host meetup"},
-	}
+	// var todos string
+	// todos := Todos{
+	// 	Todo{Name: "Write presentation"},
+	// 	Todo{Name: "Host meetup"},
+	// }
+	//
+	// if err := json.NewEncoder(w).Encode(todos); err != nil {
+	// 	panic(err)
+	// }
 
-	if err := json.NewEncoder(w).Encode(todos); err != nil {
-		panic(err)
-	}
+	c, _ := redis.Dial("tcp", ":6379")
+	defer c.Close()
+
+	c.Do("SET", "todos", `{task: "task1"}`)
+
+	todos, _ := redis.String(c.Do("GET", "todos"))
+	// redis.Scan(reply, &todos)
+
+	fmt.Fprint(w, todos)
+
+	// fmt.Printf("%#v\n", todos)
+
+	// dec := json.NewDecoder(strings.NewReader(todos))
+	// fmt.Printf("%v\n", reply)
+
+	// fmt.Printf("%#v\n", dec)
 }
 
 // TodoShow func
