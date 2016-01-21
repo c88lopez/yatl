@@ -15,32 +15,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 // TodoIndex func
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	// var todos string
-	// todos := Todos{
-	// 	Todo{Name: "Write presentation"},
-	// 	Todo{Name: "Host meetup"},
-	// }
-	//
-	// if err := json.NewEncoder(w).Encode(todos); err != nil {
-	// 	panic(err)
-	// }
+	var todos Todos
 
 	c, _ := redis.Dial("tcp", ":6379")
 	defer c.Close()
 
-	c.Do("SET", "todos", `{task: "task1"}`)
+	values, _ := redis.Values(c.Do("LRANGE", "todos", 0, -1))
 
-	todos, _ := redis.String(c.Do("GET", "todos"))
-	// redis.Scan(reply, &todos)
+	redis.ScanSlice(values, &todos)
 
-	fmt.Fprint(w, todos)
+	fmt.Printf("%v\n", todos)
 
-	// fmt.Printf("%#v\n", todos)
-
-	// dec := json.NewDecoder(strings.NewReader(todos))
-	// fmt.Printf("%v\n", reply)
-
-	// fmt.Printf("%#v\n", dec)
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write([]byte(todos))
 }
 
 // TodoShow func
