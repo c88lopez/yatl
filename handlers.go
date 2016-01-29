@@ -19,7 +19,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 // TodoIndex func
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
-	c, _ := redis.Dial("tcp", ":6379")
+	//c, _ := redis.Dial("tcp", ":6379")
+	c := redisPool.Get()
 	defer c.Close()
 
 	todos, _ := redis.String(c.Do("GET", "todos"))
